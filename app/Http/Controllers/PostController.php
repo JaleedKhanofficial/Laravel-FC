@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
 use App\Models\Category;
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -16,7 +16,7 @@ class PostController extends Controller
         $posts = Post::orderBy('created_at','DESC')->paginate(5);
 
 
-        return view('dashboard',[
+        return view('post.index',[
             'posts' => $posts,
         ]);
     }
@@ -26,7 +26,10 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::get(); // Assuming you have a Category model
+        return view('post.create',[
+            'categories' => $categories,    
+        ]);
     }
 
     /**
@@ -34,7 +37,12 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+        ]);
     }
 
     /**
